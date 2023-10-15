@@ -18,5 +18,8 @@ build_property.ProjectDir = /home/evgeny/Documents/Osiris/OsirisCommander/
 [/home/evgeny/Documents/Osiris/OsirisCommander/App.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
+[/home/evgeny/Documents/Osiris/OsirisCommander/Views/FilePanelView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
 [/home/evgeny/Documents/Osiris/OsirisCommander/Views/MainWindow.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml

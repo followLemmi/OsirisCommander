@@ -1,0 +1,51 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:OsirisCommander.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="OsirisCommander.Views.FilePanelView"
+             x:DataType="vm:FilePanelViewModel">
+
+    <Design.DataContext>
+        <vm:FilePanelViewModel />
+    </Design.DataContext>
+
+    <DataGrid x:Name="FileList" ItemsSource="{Binding Files}" Margin="10" CanUserResizeColumns="True"
+              CanUserSortColumns="True" IsReadOnly="True" GridLinesVisibility="None" BorderBrush="Transparent"
+              SelectedItem="{Binding SelectedFile}" >
+        <DataGrid.KeyBindings>
+            <KeyBinding Gesture="Enter" Command="{Binding OnEnterEvent}"></KeyBinding>
+            <KeyBinding Gesture="Back" Command="{Binding OnBackspaceEvent}"></KeyBinding>
+        </DataGrid.KeyBindings>
+        <DataGrid.Columns>
+            <DataGridTemplateColumn Header="Name" Width="400" CanUserSort="True">
+                <DataTemplate>
+                    <Grid ColumnDefinitions="24, 350">
+                        <Image Grid.Column="0" Width="24" Height="24" Source="{Binding FileIcon}"
+                               x:DataType="vm:FileModel">
+                        </Image>
+                        <TextBlock Grid.Column="1" Text="{Binding FileName}" x:DataType="vm:FileModel"
+                                   VerticalAlignment="Center">
+                        </TextBlock>
+                    </Grid>
+                </DataTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTextColumn Header="Extension" Binding="{Binding FileExtension}"></DataGridTextColumn>
+        </DataGrid.Columns>
+        <DataGrid.Styles>
+            <Style Selector="DataGridCell Rectangle">
+                <Setter Property="IsVisible" Value="False"></Setter>
+            </Style>
+            <Style Selector="DataGridRow:selected /template/ Rectangle">
+                <Setter Property="Fill" Value="Transparent"></Setter>
+            </Style>
+            <Style Selector="DataGridRow:selected">
+                <Setter Property="Background" Value="Aqua"></Setter>
+            </Style>
+            <Style Selector="DataGridRow:pointerover /template/ Rectangle">
+                <Setter Property="Fill" Value="Transparent"></Setter>
+            </Style>
+        </DataGrid.Styles>
+    </DataGrid>
+</UserControl>

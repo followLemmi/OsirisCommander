@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using OsirisCommander.Logic.FileSystem;
 using OsirisCommander.ViewModels;
 using OsirisCommander.Views;
 
