@@ -12,7 +12,7 @@ public class LinuxFileSystemManagerImpl
     private string _rootDirectoryPath = "/";
     private string _currentDirectory;
     private string? _parentDirectory;
-    
+
     public LinuxFileSystemManagerImpl()
     {
         _parentDirectory = "/";
@@ -49,8 +49,10 @@ public class LinuxFileSystemManagerImpl
         List<FileModel> files = new List<FileModel>();
         if (!_currentDirectory.Equals("/"))
         {
-            files.Add(new FileModel("..", "<DIR>", "avares://OsirisCommander/Assets/up-arrow.png", 0, true, _parentDirectory));
+            files.Add(new FileModel("..", "<DIR>", "avares://OsirisCommander/Assets/up-arrow.png", 0, true,
+                _parentDirectory));
         }
+
         files.AddRange(GetCurrentDirectoriesList());
         files.AddRange(GetCurrentFilesList());
         return new ObservableCollection<FileModel>(files);
@@ -73,7 +75,22 @@ public class LinuxFileSystemManagerImpl
         }
         else
         {
-            Process.Start("xdg-open",path);
+            Process.Start("xdg-open", path);
+        }
+    }
+
+    public void PasteFile(List<string>? files)
+    {
+        if (files != null && files.Capacity != 0)
+        {
+            foreach (var file in files)
+            {
+                var fileInfo = new FileInfo(file);
+                if (Directory.Exists(file) || File.Exists(file))
+                {
+                    File.Copy(file, _currentDirectory + $"/{fileInfo.Name}");
+                }
+            }
         }
     }
 }

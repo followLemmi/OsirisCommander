@@ -134,3 +134,10 @@
 /home/evgeny/Documents/Osiris/OsirisCommander/obj/Debug/net6.0/OsirisCommander.csproj.CopyComplete
 /home/evgeny/Documents/Osiris/OsirisCommander/obj/Debug/net6.0/OsirisCommander.genruntimeconfig.cache
 /home/evgeny/Documents/Osiris/OsirisCommander/obj/Debug/net6.0/ref/OsirisCommander.dll
+/home/evgeny/Documents/Osiris/OsirisCommander/bin/Debug/net6.0/AtkSharp.dll
+/home/evgeny/Documents/Osiris/OsirisCommander/bin/Debug/net6.0/CairoSharp.dll
+/home/evgeny/Documents/Osiris/OsirisCommander/bin/Debug/net6.0/GdkSharp.dll
+/home/evgeny/Documents/Osiris/OsirisCommander/bin/Debug/net6.0/GioSharp.dll
+/home/evgeny/Documents/Osiris/OsirisCommander/bin/Debug/net6.0/GLibSharp.dll
+/home/evgeny/Documents/Osiris/OsirisCommander/bin/Debug/net6.0/GtkSharp.dll
+/home/evgeny/Documents/Osiris/OsirisCommander/bin/Debug/net6.0/PangoSharp.dll

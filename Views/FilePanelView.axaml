@@ -17,6 +17,9 @@
         <DataGrid.KeyBindings>
             <KeyBinding Gesture="Enter" Command="{Binding OnEnterEvent}"></KeyBinding>
             <KeyBinding Gesture="Back" Command="{Binding OnBackspaceEvent}"></KeyBinding>
+            <KeyBinding Gesture="Ctrl+C" Command="{Binding CopyEvent}"></KeyBinding>
+            <KeyBinding Gesture="Ctrl+V" Command="{Binding PasteEvent}"></KeyBinding>
+            <!-- <KeyBinding Gesture="Ctrl+V" Command="{Binding TestTap}"></KeyBinding> -->
         </DataGrid.KeyBindings>
         <DataGrid.Columns>
             <DataGridTemplateColumn Header="Name" Width="400" CanUserSort="True">
