@@ -11,7 +11,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
-using Gdk;
 using OsirisCommander.Logic.FileSystem;
 using OsirisCommander.Utils;
 using OsirisCommander.Views;
