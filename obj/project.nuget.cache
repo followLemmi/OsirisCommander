@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "ia1rau8E3MuuhV9TOgPE7iHlpHoNdumcKO4h3CPSTDXMXCBbk4X42rINENBzXz9F6Ed4/zYITUmSmyTiTg+H+Q==",
+  "dgSpecHash": "b6Egq1DJT/I4Y6aUQYsa1m1LjyGH53RJB21vEmNwo6YCOlCBimFWbCxniqB1MGReSJee9eQtTvBaCWXjaXjCew==",
   "success": true,
   "projectFilePath": "/home/evgeny/Documents/Osiris/OsirisCommander/OsirisCommander.csproj",
   "expectedPackageFiles": [
@@ -21,6 +21,8 @@
     "/home/evgeny/.nuget/packages/avalonia.themes.simple/11.0.4/avalonia.themes.simple.11.0.4.nupkg.sha512",
     "/home/evgeny/.nuget/packages/avalonia.win32/11.0.4/avalonia.win32.11.0.4.nupkg.sha512",
     "/home/evgeny/.nuget/packages/avalonia.x11/11.0.4/avalonia.x11.11.0.4.nupkg.sha512",
+    "/home/evgeny/.nuget/packages/avalonia.xaml.interactions/11.0.2/avalonia.xaml.interactions.11.0.2.nupkg.sha512",
+    "/home/evgeny/.nuget/packages/avalonia.xaml.interactivity/11.0.2/avalonia.xaml.interactivity.11.0.2.nupkg.sha512",
     "/home/evgeny/.nuget/packages/dynamicdata/7.9.5/dynamicdata.7.9.5.nupkg.sha512",
     "/home/evgeny/.nuget/packages/harfbuzzsharp/2.8.2.3/harfbuzzsharp.2.8.2.3.nupkg.sha512",
     "/home/evgeny/.nuget/packages/harfbuzzsharp.nativeassets.linux/2.8.2.3/harfbuzzsharp.nativeassets.linux.2.8.2.3.nupkg.sha512",

@@ -354,6 +354,39 @@
           }
         }
       },
+      "Avalonia.Xaml.Interactions/11.0.2": {
+        "type": "package",
+        "dependencies": {
+          "Avalonia": "11.0.0",
+          "Avalonia.Xaml.Interactivity": "11.0.2"
+        },
+        "compile": {
+          "lib/net6.0/Avalonia.Xaml.Interactions.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/Avalonia.Xaml.Interactions.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Avalonia.Xaml.Interactivity/11.0.2": {
+        "type": "package",
+        "dependencies": {
+          "Avalonia": "11.0.0"
+        },
+        "compile": {
+          "lib/net6.0/Avalonia.Xaml.Interactivity.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/Avalonia.Xaml.Interactivity.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "DynamicData/7.9.5": {
         "type": "package",
         "dependencies": {
@@ -1899,6 +1932,44 @@
         "lib/net6.0/Avalonia.X11.xml",
         "lib/netstandard2.0/Avalonia.X11.dll",
         "lib/netstandard2.0/Avalonia.X11.xml"
+      ]
+    },
+    "Avalonia.Xaml.Interactions/11.0.2": {
+      "sha512": "rTJc6glZqJVlcWfTtL5a3kMGkTwTYeSCB6MNe/KOJqxUdp30u9toad06WnzgxYHSAo/o1rxO2UtWkZb4qTxhAA==",
+      "type": "package",
+      "path": "avalonia.xaml.interactions/11.0.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "avalonia.xaml.interactions.11.0.2.nupkg.sha512",
+        "avalonia.xaml.interactions.nuspec",
+        "lib/net461/Avalonia.Xaml.Interactions.dll",
+        "lib/net461/Avalonia.Xaml.Interactions.xml",
+        "lib/net6.0/Avalonia.Xaml.Interactions.dll",
+        "lib/net6.0/Avalonia.Xaml.Interactions.xml",
+        "lib/netstandard2.0/Avalonia.Xaml.Interactions.dll",
+        "lib/netstandard2.0/Avalonia.Xaml.Interactions.xml",
+        "lib/netstandard2.1/Avalonia.Xaml.Interactions.dll",
+        "lib/netstandard2.1/Avalonia.Xaml.Interactions.xml"
+      ]
+    },
+    "Avalonia.Xaml.Interactivity/11.0.2": {
+      "sha512": "8uBANon/DMvm4ywXkKHWPWL59uj9u3753NbLx8nK0vXDOHnmlRgaXlhDG0/zlpGIgFkYhM6IgCP6q31kJxnWhQ==",
+      "type": "package",
+      "path": "avalonia.xaml.interactivity/11.0.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "avalonia.xaml.interactivity.11.0.2.nupkg.sha512",
+        "avalonia.xaml.interactivity.nuspec",
+        "lib/net461/Avalonia.Xaml.Interactivity.dll",
+        "lib/net461/Avalonia.Xaml.Interactivity.xml",
+        "lib/net6.0/Avalonia.Xaml.Interactivity.dll",
+        "lib/net6.0/Avalonia.Xaml.Interactivity.xml",
+        "lib/netstandard2.0/Avalonia.Xaml.Interactivity.dll",
+        "lib/netstandard2.0/Avalonia.Xaml.Interactivity.xml",
+        "lib/netstandard2.1/Avalonia.Xaml.Interactivity.dll",
+        "lib/netstandard2.1/Avalonia.Xaml.Interactivity.xml"
       ]
     },
     "DynamicData/7.9.5": {
@@ -4690,7 +4761,8 @@
       "Avalonia.Diagnostics >= 11.0.4",
       "Avalonia.Fonts.Inter >= 11.0.4",
       "Avalonia.ReactiveUI >= 11.0.4",
-      "Avalonia.Themes.Fluent >= 11.0.4"
+      "Avalonia.Themes.Fluent >= 11.0.4",
+      "Avalonia.Xaml.Interactions >= 11.0.2"
     ]
   },
   "packageFolders": {
@@ -4757,6 +4829,10 @@
           "Avalonia.Themes.Fluent": {
             "target": "Package",
             "version": "[11.0.4, )"
+          },
+          "Avalonia.Xaml.Interactions": {
+            "target": "Package",
+            "version": "[11.0.2, )"
           }
         },
         "imports": [

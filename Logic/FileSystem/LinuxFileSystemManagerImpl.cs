@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using OsirisCommander.Models;
 using OsirisCommander.ViewModels;
 
 namespace OsirisCommander.Logic.FileSystem;

@@ -2,16 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
-using Avalonia;
+using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
 using OsirisCommander.Logic.FileSystem;
+using OsirisCommander.Logic.FileSystem.Sorting;
+using OsirisCommander.Models;
 using OsirisCommander.Utils;
 using OsirisCommander.Views;
 using ReactiveUI;
@@ -21,59 +20,28 @@ namespace OsirisCommander.ViewModels;
 public class FilePanelViewModel : ViewModelBase
 {
     public IClipboard? Clipboard { get; set; }
-    public FilePanelView View { get; set; }
+    public FilePanelView View { get; set; } = null!;
 
-    private LinuxFileSystemManagerImpl _linuxFileSystemManagerImpl;
+    public ICommand HotKeyCommand { get; }
+    public ICommand CopyCommand { get; }
+
+    private readonly LinuxFileSystemManagerImpl _linuxFileSystemManagerImpl;
+    private readonly FileListSortingManager _fileListSortingManager;
     private ObservableCollection<FileModel> _files;
     private FileModel _selectedFile;
     private FileModel _lastSelectedFile;
     private bool _focused;
 
-    public FilePanelViewModel(LinuxFileSystemManagerImpl linuxFileSystemManagerImpl, bool focused)
+    public FilePanelViewModel(LinuxFileSystemManagerImpl linuxFileSystemManagerImpl)
     {
+        HotKeyCommand = ReactiveCommand.Create<Key>(HotKeyProcessor);
+        CopyCommand = ReactiveCommand.Create<DataGrid>(CopyEvent);
+
         _linuxFileSystemManagerImpl = linuxFileSystemManagerImpl;
+        _fileListSortingManager = new FileListSortingManager();
         _files = _linuxFileSystemManagerImpl.GetAllCurrentFiles();
         _selectedFile = _files[0];
         _lastSelectedFile = _selectedFile;
-        _focused = focused;
-    }
-
-    public void OnEnterEvent()
-    {
-        _linuxFileSystemManagerImpl.OpenDirectory(SelectedFile.FullPath);
-        _lastSelectedFile = _selectedFile;
-        Files = _linuxFileSystemManagerImpl.GetAllCurrentFiles();
-        SelectedFile = Files[0];
-    }
-
-    public void OnBackspaceEvent()
-    {
-        _linuxFileSystemManagerImpl.OpenDirectory(_linuxFileSystemManagerImpl.GetParentDirectoryPath());
-        Files = _linuxFileSystemManagerImpl.GetAllCurrentFiles();
-        SelectedFile = Files[Files.ToList().FindIndex(model => model.FileName.Equals(_lastSelectedFile.FileName))];
-    }
-
-    public async void CopyEvent()
-    {
-        DataObject dataObject = new DataObject();
-        var stringBuilder = new StringBuilder();
-        foreach (var file in View.FileListDataGrid?.SelectedItems!)
-        {
-            var fileModel = file as FileModel;
-            stringBuilder.Append(fileModel!.FullPath).Append("\n\r");
-        }
-        dataObject.Set(DataFormats.Text, stringBuilder.ToString());
-        await Clipboard?.SetDataObjectAsync(dataObject)!;
-    }
-
-    public async void PasteEvent()
-    {
-        var dataObject = await Clipboard?.GetDataAsync(DataFormats.Text)!;
-        if (dataObject != null)
-        {
-            var files = FileUtils.FromClipboardDataToFilePaths(dataObject as string);
-            _linuxFileSystemManagerImpl.PasteFile(files);
-        }
     }
 
     public FileModel SelectedFile
@@ -93,5 +61,73 @@ public class FilePanelViewModel : ViewModelBase
         get => _focused;
         set => _focused = value;
     }
-    
+
+    private void HotKeyProcessor(Key key)
+    {
+        switch (key)
+        {
+            case Key.Enter:
+                OnEnterEvent();
+                break;
+            case Key.Back:
+                OnBackspaceEvent();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(key), key, null);
+        }
+    }
+
+    public void Sort(FilePanelColumn filePanelColumn)
+    {
+        switch (filePanelColumn)
+        {
+            case FilePanelColumn.Name:
+                Files = _fileListSortingManager.SortByName(Files);
+                break;
+            case FilePanelColumn.Extension:
+                Debug.WriteLine("Extention sort");
+                break;
+        }
+    }
+
+    private void OnEnterEvent()
+    {
+        _linuxFileSystemManagerImpl.OpenDirectory(SelectedFile.FullPath);
+        _lastSelectedFile = _selectedFile;
+        Files = _linuxFileSystemManagerImpl.GetAllCurrentFiles();
+        SelectedFile = Files[0];
+    }
+
+
+    private void OnBackspaceEvent()
+    {
+        _linuxFileSystemManagerImpl.OpenDirectory(_linuxFileSystemManagerImpl.GetParentDirectoryPath());
+        Files = _linuxFileSystemManagerImpl.GetAllCurrentFiles();
+        SelectedFile = Files[Files.ToList().FindIndex(model => model.FileName.Equals(_lastSelectedFile.FileName))];
+    }
+
+    private async void CopyEvent(DataGrid dataGrid)
+    {
+        var selectedItems = dataGrid.SelectedItems;
+        DataObject dataObject = new DataObject();
+        var stringBuilder = new StringBuilder();
+        foreach (var file in selectedItems)
+        {
+            var fileModel = file as FileModel;
+            stringBuilder.Append(fileModel!.FullPath).Append("\n\r");
+        }
+
+        dataObject.Set(DataFormats.Text, stringBuilder.ToString());
+        await Clipboard?.SetDataObjectAsync(dataObject)!;
+    }
+
+    public async void PasteEvent()
+    {
+        var dataObject = await Clipboard?.GetDataAsync(DataFormats.Text)!;
+        if (dataObject != null)
+        {
+            var files = FileUtils.FromClipboardDataToFilePaths(dataObject as string);
+            _linuxFileSystemManagerImpl.PasteFile(files);
+        }
+    }
 }

@@ -14,10 +14,6 @@ public partial class MainWindow : Window
 
     private void OnOpened(object? sender, EventArgs e)
     {
-        if (DataContext is MainWindowViewModel mainWindowViewModel)
-        {
-            LeftFilePanel.DataContext = mainWindowViewModel.LeftFilePanelViewModel;
-            RightFilePanel.DataContext = mainWindowViewModel.RightFilePanelViewModel;
-        }
+        
     }
 }

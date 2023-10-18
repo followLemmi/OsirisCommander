@@ -3,38 +3,39 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:OsirisCommander.ViewModels"
+             xmlns:res="clr-namespace:OsirisCommander.Resources"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+             xmlns:models="clr-namespace:OsirisCommander.Models"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="OsirisCommander.Views.FilePanelView"
              x:DataType="vm:FilePanelViewModel">
-
+    
     <Design.DataContext>
         <vm:FilePanelViewModel />
     </Design.DataContext>
-
+    
     <DataGrid x:Name="FileList" ItemsSource="{Binding Files}" Margin="10" CanUserResizeColumns="True"
               CanUserSortColumns="True" IsReadOnly="True" GridLinesVisibility="None" BorderBrush="Transparent"
-              SelectedItem="{Binding SelectedFile}" >
+              SelectedItem="{Binding SelectedFile}" Sorting="FileList_OnSorting">
         <DataGrid.KeyBindings>
-            <KeyBinding Gesture="Enter" Command="{Binding OnEnterEvent}"></KeyBinding>
-            <KeyBinding Gesture="Back" Command="{Binding OnBackspaceEvent}"></KeyBinding>
-            <KeyBinding Gesture="Ctrl+C" Command="{Binding CopyEvent}"></KeyBinding>
-            <KeyBinding Gesture="Ctrl+V" Command="{Binding PasteEvent}"></KeyBinding>
-            <!-- <KeyBinding Gesture="Ctrl+V" Command="{Binding TestTap}"></KeyBinding> -->
+            <KeyBinding Gesture="Enter" Command="{Binding HotKeyCommand}" CommandParameter="{x:Static Key.Enter}"></KeyBinding>
+            <KeyBinding Gesture="Back" Command="{Binding HotKeyCommand}" CommandParameter="{x:Static Key.Back}"></KeyBinding>
+            <KeyBinding Gesture="Ctrl+C" Command="{Binding CopyCommand}" CommandParameter="{Binding Path=$self}"></KeyBinding>
+            <KeyBinding Gesture="Ctrl+V" Command="{Binding HotKeyProcessor}"></KeyBinding>
         </DataGrid.KeyBindings>
         <DataGrid.Columns>
-            <DataGridTemplateColumn Header="Name" Width="400" CanUserSort="True">
-                <DataTemplate>
+            <DataGridTemplateColumn Header="{x:Static res:Localization.Name}" Width="400" CanUserSort="True" SortMemberPath="Name">
+                <DataTemplate DataType="models:FileModel">
                     <Grid ColumnDefinitions="24, 350">
-                        <Image Grid.Column="0" Width="24" Height="24" Source="{Binding FileIcon}"
-                               x:DataType="vm:FileModel">
+                        <Image Grid.Column="0" Width="24" Height="24" Source="{Binding FileIcon}">
                         </Image>
-                        <TextBlock Grid.Column="1" Text="{Binding FileName}" x:DataType="vm:FileModel"
-                                   VerticalAlignment="Center">
+                        <TextBlock Grid.Column="1" Text="{Binding FileName}" VerticalAlignment="Center">
                         </TextBlock>
                     </Grid>
                 </DataTemplate>
             </DataGridTemplateColumn>
-            <DataGridTextColumn Header="Extension" Binding="{Binding FileExtension}"></DataGridTextColumn>
+            <DataGridTextColumn Header="Extension" Binding="{Binding FileExtension}" CanUserSort="True" SortMemberPath="Extension"></DataGridTextColumn>
         </DataGrid.Columns>
         <DataGrid.Styles>
             <Style Selector="DataGridCell Rectangle">

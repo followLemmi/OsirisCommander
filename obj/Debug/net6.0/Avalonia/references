@@ -1,4 +1,3 @@
-/home/evgeny/.nuget/packages/atksharp/3.24.24.95/lib/net6.0/AtkSharp.dll
 /home/evgeny/.nuget/packages/avalonia/11.0.4/ref/net6.0/Avalonia.Base.dll
 /home/evgeny/.nuget/packages/avalonia.controls.colorpicker/11.0.4/lib/net6.0/Avalonia.Controls.ColorPicker.dll
 /home/evgeny/.nuget/packages/avalonia.controls.datagrid/11.0.4/lib/net6.0/Avalonia.Controls.DataGrid.dll
@@ -23,12 +22,9 @@
 /home/evgeny/.nuget/packages/avalonia.themes.simple/11.0.4/lib/net6.0/Avalonia.Themes.Simple.dll
 /home/evgeny/.nuget/packages/avalonia.win32/11.0.4/lib/net6.0/Avalonia.Win32.dll
 /home/evgeny/.nuget/packages/avalonia.x11/11.0.4/lib/net6.0/Avalonia.X11.dll
-/home/evgeny/.nuget/packages/cairosharp/3.24.24.95/lib/net6.0/CairoSharp.dll
+/home/evgeny/.nuget/packages/avalonia.xaml.interactions/11.0.2/lib/net6.0/Avalonia.Xaml.Interactions.dll
+/home/evgeny/.nuget/packages/avalonia.xaml.interactivity/11.0.2/lib/net6.0/Avalonia.Xaml.Interactivity.dll
 /home/evgeny/.nuget/packages/dynamicdata/7.9.5/lib/net6.0/DynamicData.dll
-/home/evgeny/.nuget/packages/gdksharp/3.24.24.95/lib/net6.0/GdkSharp.dll
-/home/evgeny/.nuget/packages/giosharp/3.24.24.95/lib/net6.0/GioSharp.dll
-/home/evgeny/.nuget/packages/glibsharp/3.24.24.95/lib/net6.0/GLibSharp.dll
-/home/evgeny/.nuget/packages/gtksharp/3.24.24.95/lib/net6.0/GtkSharp.dll
 /home/evgeny/.nuget/packages/harfbuzzsharp/2.8.2.3/lib/net6.0/HarfBuzzSharp.dll
 /home/evgeny/.nuget/packages/microcom.runtime/0.11.0/lib/net5.0/MicroCom.Runtime.dll
 /home/evgeny/.nuget/packages/microsoft.codeanalysis.csharp/3.8.0/lib/netcoreapp3.1/Microsoft.CodeAnalysis.CSharp.dll
@@ -43,7 +39,6 @@
 /home/evgeny/.nuget/packages/microsoft.win32.systemevents/6.0.0/lib/net6.0/Microsoft.Win32.SystemEvents.dll
 /usr/lib/dotnet/packs/Microsoft.NETCore.App.Ref/6.0.23/ref/net6.0/mscorlib.dll
 /usr/lib/dotnet/packs/Microsoft.NETCore.App.Ref/6.0.23/ref/net6.0/netstandard.dll
-/home/evgeny/.nuget/packages/pangosharp/3.24.24.95/lib/net6.0/PangoSharp.dll
 /home/evgeny/.nuget/packages/reactiveui/18.3.1/lib/net6.0/ReactiveUI.dll
 /home/evgeny/.nuget/packages/skiasharp/2.88.3/lib/net6.0/SkiaSharp.dll
 /home/evgeny/.nuget/packages/splat/14.4.1/lib/net6.0/Splat.dll
