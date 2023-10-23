@@ -10,11 +10,11 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="OsirisCommander.Views.FilePanelView"
              x:DataType="vm:FilePanelViewModel">
-    
+
     <Design.DataContext>
         <vm:FilePanelViewModel />
     </Design.DataContext>
-    
+
     <DataGrid x:Name="FileList" ItemsSource="{Binding Files}" Margin="10" CanUserResizeColumns="True"
               CanUserSortColumns="True" IsReadOnly="True" GridLinesVisibility="None" BorderBrush="Transparent"
               SelectedItem="{Binding SelectedFile}" Sorting="FileList_OnSorting">
@@ -25,7 +25,8 @@
             <KeyBinding Gesture="Ctrl+V" Command="{Binding HotKeyProcessor}"></KeyBinding>
         </DataGrid.KeyBindings>
         <DataGrid.Columns>
-            <DataGridTemplateColumn Header="{x:Static res:Localization.Name}" Width="400" CanUserSort="True" SortMemberPath="Name">
+            <DataGridTemplateColumn Header="{x:Static res:Localization.Name}" Width="400" CanUserSort="True"
+                                    SortMemberPath="Name">
                 <DataTemplate DataType="models:FileModel">
                     <Grid ColumnDefinitions="24, 350">
                         <Image Grid.Column="0" Width="24" Height="24" Source="{Binding FileIcon}">
@@ -35,7 +36,9 @@
                     </Grid>
                 </DataTemplate>
             </DataGridTemplateColumn>
-            <DataGridTextColumn Header="Extension" Binding="{Binding FileExtension}" CanUserSort="True" SortMemberPath="Extension"></DataGridTextColumn>
+            <DataGridTextColumn Header="Extension" Binding="{Binding FileExtension}" CanUserSort="True"
+                                SortMemberPath="Extension">
+            </DataGridTextColumn>
         </DataGrid.Columns>
         <DataGrid.Styles>
             <Style Selector="DataGridCell Rectangle">
@@ -45,10 +48,15 @@
                 <Setter Property="Fill" Value="Transparent"></Setter>
             </Style>
             <Style Selector="DataGridRow:selected">
-                <Setter Property="Background" Value="Aqua"></Setter>
+                <!-- <Setter Property="Background" Value="Aqua"></Setter> -->
+                <Setter Property="BorderBrush" Value="Aqua"/>
+                <Setter Property="BorderThickness" Value="1"/>
             </Style>
             <Style Selector="DataGridRow:pointerover /template/ Rectangle">
                 <Setter Property="Fill" Value="Transparent"></Setter>
+            </Style>
+            <Style Selector="DataGrid:focus DataGridRow:selected">
+                <Setter Property="Background" Value="Aqua"></Setter>
             </Style>
         </DataGrid.Styles>
     </DataGrid>
