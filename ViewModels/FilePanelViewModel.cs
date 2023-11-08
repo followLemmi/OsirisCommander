@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Input;
@@ -25,21 +26,21 @@ public class FilePanelViewModel : ViewModelBase
     public ICommand HotKeyCommand { get; }
     public ICommand CopyCommand { get; }
 
-    private readonly LinuxFileSystemManagerImpl _linuxFileSystemManagerImpl;
+    private readonly IFileSystemManager _fileSystemManager;
     private readonly FileListSortingManager _fileListSortingManager;
     private ObservableCollection<FileModel> _files;
     private FileModel _selectedFile;
     private FileModel _lastSelectedFile;
     private bool _focused;
 
-    public FilePanelViewModel(LinuxFileSystemManagerImpl linuxFileSystemManagerImpl)
+    public FilePanelViewModel(IFileSystemManager fileSystemManager)
     {
         HotKeyCommand = ReactiveCommand.Create<Key>(HotKeyProcessor);
         CopyCommand = ReactiveCommand.Create<DataGrid>(CopyEvent);
 
-        _linuxFileSystemManagerImpl = linuxFileSystemManagerImpl;
+        _fileSystemManager = fileSystemManager;
         _fileListSortingManager = new FileListSortingManager();
-        _files = _linuxFileSystemManagerImpl.GetAllCurrentFiles();
+        _files = _fileSystemManager.GetAllCurrentFiles();
         _selectedFile = _files[0];
         _lastSelectedFile = _selectedFile;
     }
@@ -92,18 +93,25 @@ public class FilePanelViewModel : ViewModelBase
 
     private void OnEnterEvent()
     {
-        _linuxFileSystemManagerImpl.OpenDirectory(SelectedFile.FullPath);
-        _lastSelectedFile = _selectedFile;
-        Files = _linuxFileSystemManagerImpl.GetAllCurrentFiles();
+        _fileSystemManager.OpenDirectory(SelectedFile.FullPath);
+        _fileSystemManager.PushLastSelectedFile(_selectedFile);
+        Files = _fileSystemManager.GetAllCurrentFiles();
         SelectedFile = Files[0];
     }
 
 
     private void OnBackspaceEvent()
     {
-        _linuxFileSystemManagerImpl.OpenDirectory(_linuxFileSystemManagerImpl.GetParentDirectoryPath());
-        Files = _linuxFileSystemManagerImpl.GetAllCurrentFiles();
-        SelectedFile = Files[Files.ToList().FindIndex(model => model.FileName.Equals(_lastSelectedFile.FileName))];
+        Console.WriteLine("Backspace");
+        var previousSelectedFile = _fileSystemManager.GetPreviousSelectedFile();
+        if (previousSelectedFile == null)
+        {
+            return;
+        }
+        var parentDir = _fileSystemManager.GetParentDirectoryPath();
+        _fileSystemManager.OpenDirectory(parentDir);
+        Files = _fileSystemManager.GetAllCurrentFiles();
+        SelectedFile = Files[Files.ToList().FindIndex(model => model.FileName.Equals(previousSelectedFile.FileName))];
     }
 
     private async void CopyEvent(DataGrid dataGrid)
@@ -127,7 +135,7 @@ public class FilePanelViewModel : ViewModelBase
         if (dataObject != null)
         {
             var files = FileUtils.FromClipboardDataToFilePaths(dataObject as string);
-            _linuxFileSystemManagerImpl.PasteFile(files);
+            _fileSystemManager.PasteFile(files);
         }
     }
 }

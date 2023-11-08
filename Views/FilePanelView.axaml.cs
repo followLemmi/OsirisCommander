@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
@@ -10,6 +11,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using OsirisCommander.Logic.FileSystem;
+using OsirisCommander.Logic.FileSystem.Impl;
 using OsirisCommander.Logic.FileSystem.Sorting;
 using OsirisCommander.ViewModels;
 using ReactiveUI;
@@ -27,7 +29,16 @@ public partial class FilePanelView : UserControl
     {
         InitializeComponent();
 
-        DataContext = new FilePanelViewModel(new LinuxFileSystemManagerImpl());
+        IFileSystemManager currentFileManager;
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            currentFileManager = new WindowsFileSystemManagerImpl();
+        }
+        else
+        {
+            currentFileManager = new LinuxFileSystemManagerImpl();
+        }
+        DataContext = new FilePanelViewModel(currentFileManager);
         
         FileListDataGrid = this.FindControl<DataGrid>("FileList");
         if (FileListDataGrid != null)

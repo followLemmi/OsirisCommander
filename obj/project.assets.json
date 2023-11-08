@@ -4766,19 +4766,19 @@
     ]
   },
   "packageFolders": {
-    "/home/evgeny/.nuget/packages/": {}
+    "C:\\Users\\ekhar\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/evgeny/Documents/Osiris/OsirisCommander/OsirisCommander.csproj",
+      "projectUniqueName": "C:\\my_projects\\OsirisCommander\\OsirisCommander.csproj",
       "projectName": "OsirisCommander",
-      "projectPath": "/home/evgeny/Documents/Osiris/OsirisCommander/OsirisCommander.csproj",
-      "packagesPath": "/home/evgeny/.nuget/packages/",
-      "outputPath": "/home/evgeny/Documents/Osiris/OsirisCommander/obj/",
+      "projectPath": "C:\\my_projects\\OsirisCommander\\OsirisCommander.csproj",
+      "packagesPath": "C:\\Users\\ekhar\\.nuget\\packages\\",
+      "outputPath": "C:\\my_projects\\OsirisCommander\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/evgeny/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\ekhar\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net6.0"
@@ -4848,8 +4848,20 @@
         "warn": true,
         "downloadDependencies": [
           {
-            "name": "Microsoft.NETCore.App.Host.linux-x64",
-            "version": "[6.0.23, 6.0.23]"
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[6.0.22, 6.0.22]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.win-x64",
+            "version": "[6.0.22, 6.0.22]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[6.0.22, 6.0.22]"
+          },
+          {
+            "name": "Microsoft.WindowsDesktop.App.Ref",
+            "version": "[6.0.22, 6.0.22]"
           }
         ],
         "frameworkReferences": {
@@ -4857,7 +4869,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/7.0.112/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
       }
     }
   }

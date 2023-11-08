@@ -1,28 +1,29 @@
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using OsirisCommander.Models;
-using OsirisCommander.ViewModels;
 
-namespace OsirisCommander.Logic.FileSystem;
+namespace OsirisCommander.Logic.FileSystem.Impl;
 
-public class LinuxFileSystemManagerImpl
+public class WindowsFileSystemManagerImpl : IFileSystemManager
 {
-    private string _rootDirectoryPath = "/";
+
     private string _currentDirectory;
-    private string? _parentDirectory;
+    private string _parentDirectory;
+    private Stack<FileModel> _selectionQueue = new Stack<FileModel>();
 
-    public LinuxFileSystemManagerImpl()
+    public WindowsFileSystemManagerImpl()
     {
-        _parentDirectory = "/";
-        _currentDirectory = _rootDirectoryPath;
+        _currentDirectory = GetDrivesInfo()[0].RootDirectory.FullName;
     }
-
+    
     public DriveInfo[] GetDrivesInfo()
     {
-        throw new System.NotImplementedException();
+        return DriveInfo.GetDrives();
     }
 
     public string GetParentDirectoryPath()
@@ -32,7 +33,7 @@ public class LinuxFileSystemManagerImpl
 
     public string GetCurrentDirectoryPath()
     {
-        throw new System.NotImplementedException();
+        return _currentDirectory;
     }
 
     public List<FileModel> GetCurrentFilesList()
@@ -48,7 +49,7 @@ public class LinuxFileSystemManagerImpl
     public ObservableCollection<FileModel> GetAllCurrentFiles()
     {
         List<FileModel> files = new List<FileModel>();
-        if (!_currentDirectory.Equals("/"))
+        if (!IsCurrentDirectoryRoot())
         {
             files.Add(new FileModel("..", "<DIR>", "avares://OsirisCommander/Assets/up-arrow.png", 0, true,
                 _parentDirectory));
@@ -76,22 +77,36 @@ public class LinuxFileSystemManagerImpl
         }
         else
         {
-            Process.Start("xdg-open", path);
+            Process.Start(path);
         }
     }
 
     public void PasteFile(List<string>? files)
     {
-        if (files != null && files.Capacity != 0)
+        throw new System.NotImplementedException();
+    }
+
+    public FileModel GetPreviousSelectedFile()
+    {
+        try
         {
-            foreach (var file in files)
-            {
-                var fileInfo = new FileInfo(file);
-                if (Directory.Exists(file) || File.Exists(file))
-                {
-                    File.Copy(file, _currentDirectory + $"/{fileInfo.Name}");
-                }
-            }
+            return _selectionQueue.Pop();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Selected files stack is empty");
+            return null!;
         }
     }
+
+    public void PushLastSelectedFile(FileModel fileModel)
+    {
+        _selectionQueue.Push(fileModel);
+    }
+
+    private bool IsCurrentDirectoryRoot()
+    {
+        return GetDrivesInfo().Any(dir => _currentDirectory.Equals(dir.Name));
+    }
+    
 }
