@@ -28,17 +28,6 @@ public partial class FilePanelView : UserControl
     public FilePanelView()
     {
         InitializeComponent();
-
-        IFileSystemManager currentFileManager;
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            currentFileManager = new WindowsFileSystemManagerImpl();
-        }
-        else
-        {
-            currentFileManager = new LinuxFileSystemManagerImpl();
-        }
-        DataContext = new FilePanelViewModel(currentFileManager);
         
         FileListDataGrid = this.FindControl<DataGrid>("FileList");
         if (FileListDataGrid != null)
@@ -59,12 +48,11 @@ public partial class FilePanelView : UserControl
         _viewModel =  DataContext as FilePanelViewModel;
         if (_viewModel != null) _viewModel.Clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
         if (_viewModel != null) _viewModel.View = this;
+        // if (_viewModel != null) GotFocus += (sender, args) =>
+        // {
+        //     _viewModel.UpdateFileView();
+        // };
         base.OnLoaded(e);
-    }
-
-    private void InputElement_OnTapped(object? sender, TappedEventArgs e)
-    {
-        Debug.WriteLine("Cleicked on header");
     }
 
     private void FileList_OnSorting(object? sender, DataGridColumnEventArgs e)

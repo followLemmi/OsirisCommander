@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
-using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
 using OsirisCommander.Logic.FileSystem;
@@ -20,29 +18,45 @@ namespace OsirisCommander.ViewModels;
 
 public class FilePanelViewModel : ViewModelBase
 {
+    private readonly Panel _panelOrder;
     public IClipboard? Clipboard { get; set; }
     public FilePanelView View { get; set; } = null!;
 
     public ICommand HotKeyCommand { get; }
-    public ICommand CopyCommand { get; }
 
-    private readonly IFileSystemManager _fileSystemManager;
+    public readonly IFileSystemManager FileSystemManager;
     private readonly FileListSortingManager _fileListSortingManager;
     private ObservableCollection<FileModel> _files;
     private FileModel _selectedFile;
-    private FileModel _lastSelectedFile;
     private bool _focused;
 
-    public FilePanelViewModel(IFileSystemManager fileSystemManager)
-    {
-        HotKeyCommand = ReactiveCommand.Create<Key>(HotKeyProcessor);
-        CopyCommand = ReactiveCommand.Create<DataGrid>(CopyEvent);
+    public delegate void CopyDelegate(Panel panel, FileModel fileModel);
+    public static event CopyDelegate CopyEvent;
 
-        _fileSystemManager = fileSystemManager;
+    public FilePanelViewModel(Panel panelOrder, IFileSystemManager fileSystemManager)
+    {
+        _panelOrder = panelOrder;
+        HotKeyCommand = ReactiveCommand.Create<Key>(HotKeyProcessor);
+        FileSystemManager = fileSystemManager;
         _fileListSortingManager = new FileListSortingManager();
-        _files = _fileSystemManager.GetAllCurrentFiles();
+        _files = FileSystemManager.GetAllCurrentFiles();
         _selectedFile = _files[0];
-        _lastSelectedFile = _selectedFile;
+        PanelController.CopyProgress += Progress;
+        var thread = new Thread(UpdateFileView)
+        {
+            Name = "FILE-VIEW-UPDATER"
+        };
+        thread.Start();
+    }
+
+    private void Progress(double percentage)
+    {
+        Console.WriteLine($"Percentage = {percentage}");
+    }
+
+    private void Copy()
+    {
+        CopyEvent.Invoke(_panelOrder, SelectedFile);
     }
 
     public FileModel SelectedFile
@@ -73,6 +87,9 @@ public class FilePanelViewModel : ViewModelBase
             case Key.Back:
                 OnBackspaceEvent();
                 break;
+            case Key.A:
+                Copy();
+                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(key), key, null);
         }
@@ -93,9 +110,9 @@ public class FilePanelViewModel : ViewModelBase
 
     private void OnEnterEvent()
     {
-        _fileSystemManager.OpenDirectory(SelectedFile.FullPath);
-        _fileSystemManager.PushLastSelectedFile(_selectedFile);
-        Files = _fileSystemManager.GetAllCurrentFiles();
+        FileSystemManager.OpenDirectory(SelectedFile.FullPath);
+        FileSystemManager.PushLastSelectedFile(_selectedFile);
+        Files = FileSystemManager.GetAllCurrentFiles();
         SelectedFile = Files[0];
     }
 
@@ -103,30 +120,15 @@ public class FilePanelViewModel : ViewModelBase
     private void OnBackspaceEvent()
     {
         Console.WriteLine("Backspace");
-        var previousSelectedFile = _fileSystemManager.GetPreviousSelectedFile();
+        var previousSelectedFile = FileSystemManager.GetPreviousSelectedFile();
         if (previousSelectedFile == null)
         {
             return;
         }
-        var parentDir = _fileSystemManager.GetParentDirectoryPath();
-        _fileSystemManager.OpenDirectory(parentDir);
-        Files = _fileSystemManager.GetAllCurrentFiles();
+        var parentDir = FileSystemManager.GetParentDirectoryPath();
+        FileSystemManager.OpenDirectory(parentDir);
+        Files = FileSystemManager.GetAllCurrentFiles();
         SelectedFile = Files[Files.ToList().FindIndex(model => model.FileName.Equals(previousSelectedFile.FileName))];
-    }
-
-    private async void CopyEvent(DataGrid dataGrid)
-    {
-        var selectedItems = dataGrid.SelectedItems;
-        DataObject dataObject = new DataObject();
-        var stringBuilder = new StringBuilder();
-        foreach (var file in selectedItems)
-        {
-            var fileModel = file as FileModel;
-            stringBuilder.Append(fileModel!.FullPath).Append("\n\r");
-        }
-
-        dataObject.Set(DataFormats.Text, stringBuilder.ToString());
-        await Clipboard?.SetDataObjectAsync(dataObject)!;
     }
 
     public async void PasteEvent()
@@ -135,7 +137,15 @@ public class FilePanelViewModel : ViewModelBase
         if (dataObject != null)
         {
             var files = FileUtils.FromClipboardDataToFilePaths(dataObject as string);
-            _fileSystemManager.PasteFile(files);
+            FileSystemManager.PasteFile(files);
         }
+    }
+
+    public void UpdateFileView()
+    {
+        var tmpSelected = _selectedFile;
+        Files = FileSystemManager.GetAllCurrentFiles();
+        SelectedFile = tmpSelected;
+        Thread.Sleep(1000);
     }
 }

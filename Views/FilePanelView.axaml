@@ -21,7 +21,8 @@
         <DataGrid.KeyBindings>
             <KeyBinding Gesture="Enter" Command="{Binding HotKeyCommand}" CommandParameter="{x:Static Key.Enter}"></KeyBinding>
             <KeyBinding Gesture="Back" Command="{Binding HotKeyCommand}" CommandParameter="{x:Static Key.Back}"></KeyBinding>
-            <KeyBinding Gesture="Ctrl+C" Command="{Binding CopyCommand}" CommandParameter="{Binding Path=$self}"></KeyBinding>
+            <KeyBinding Gesture="A" Command="{Binding HotKeyCommand}" CommandParameter="{x:Static Key.A}"></KeyBinding>
+            <!-- <KeyBinding Gesture="Ctrl+C" Command="{Binding CopyCommand}" CommandParameter="{Binding Path=$self}"></KeyBinding> -->
             <KeyBinding Gesture="Ctrl+V" Command="{Binding HotKeyProcessor}"></KeyBinding>
         </DataGrid.KeyBindings>
         <DataGrid.Columns>
