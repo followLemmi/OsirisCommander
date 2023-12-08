@@ -1,11 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 
 namespace OsirisCommander.Models;
 
-public class FileModel
+public class FileModel : IComparable
 {
     public string FileName { get; set; }
     public string FileExtension { get; set; }
@@ -25,10 +26,27 @@ public class FileModel
         FullPath = fullPath;
     }
 
+    public override bool Equals(object? obj)
+    {
+        var m = (FileModel)obj!;
+        return FileName.Equals(m.FileName) && FullPath.Equals(m.FullPath);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(FileName, FileExtension, FullPath);
+    }
+    
     public override string ToString()
     {
         return
             $"{nameof(FileName)}: {FileName}, {nameof(FileExtension)}: {FileExtension}, {nameof(FileIcon)}: {FileIcon}, {nameof(Size)}: {Size}, {nameof(IsDirectory)}: {IsDirectory}, {nameof(FullPath)}: {FullPath}";
+    }
+
+    public int CompareTo(object? obj)
+    {
+        var model = (FileModel)obj;
+        return String.Compare(FileName, model.FileName, StringComparison.OrdinalIgnoreCase);
     }
 
     public static FileModel FromFileInfo(FileInfo fileInfo)

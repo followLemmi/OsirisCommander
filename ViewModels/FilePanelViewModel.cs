@@ -1,12 +1,17 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
+using Avalonia.Threading;
+using DynamicData;
 using OsirisCommander.Logic.FileSystem;
 using OsirisCommander.Logic.FileSystem.Sorting;
 using OsirisCommander.Models;
@@ -27,8 +32,10 @@ public class FilePanelViewModel : ViewModelBase
     public readonly IFileSystemManager FileSystemManager;
     private readonly FileListSortingManager _fileListSortingManager;
     private ObservableCollection<FileModel> _files;
+    private readonly object _selectedFileLock = new object();
     private FileModel _selectedFile;
     private bool _focused;
+    private FileSystemWatcher _fileSystemWatcher;
 
     public delegate void CopyDelegate(Panel panel, FileModel fileModel);
     public static event CopyDelegate CopyEvent;
@@ -42,11 +49,53 @@ public class FilePanelViewModel : ViewModelBase
         _files = FileSystemManager.GetAllCurrentFiles();
         _selectedFile = _files[0];
         PanelController.CopyProgress += Progress;
-        var thread = new Thread(UpdateFileView)
+        
+        _fileSystemWatcher = new FileSystemWatcher();
+        _fileSystemWatcher.Path = FileSystemManager.GetCurrentDirectoryPath();
+        _fileSystemWatcher.EnableRaisingEvents = true;
+        _fileSystemWatcher.Changed += OnChange;
+        _fileSystemWatcher.Deleted += OnDelete;
+        _fileSystemWatcher.Created += OnCreate;
+        _fileSystemWatcher.Renamed += OnRename;
+    }
+
+    private void OnChange(object obj, FileSystemEventArgs args)
+    {
+        
+    }
+
+    private void OnDelete(object obj, FileSystemEventArgs args)
+    {
+        
+    }
+
+    private void OnCreate(object obj, FileSystemEventArgs args)
+    {
+        if (Directory.Exists(args.FullPath))
         {
-            Name = "FILE-VIEW-UPDATER"
-        };
-        thread.Start();
+            var directoryInfo = FileModel.FromDirectoryInfo(new DirectoryInfo(args.FullPath));
+            int index = Files.BinarySearch(directoryInfo);
+            if (index < 0)
+            {
+                index = ~index;
+            }
+            Dispatcher.UIThread.Invoke(() => Files.Insert(index, directoryInfo));
+        }
+        else
+        {
+            var fileInfo = FileModel.FromFileInfo(new FileInfo(args.FullPath));
+            int index = Files.BinarySearch(fileInfo);
+            if (index < 0)
+            {
+                index = ~index;
+            }
+            Dispatcher.UIThread.Invoke(() => Files.Insert(index, fileInfo));
+        }
+    }
+
+    private void OnRename(object obj, RenamedEventArgs args)
+    {
+        
     }
 
     private void Progress(double percentage)
@@ -61,8 +110,20 @@ public class FilePanelViewModel : ViewModelBase
 
     public FileModel SelectedFile
     {
-        get => _selectedFile;
-        set => this.RaiseAndSetIfChanged(ref _selectedFile, value);
+        get
+        {
+            lock (_selectedFileLock)
+            {
+                return _selectedFile;
+            }
+        }
+        set
+        {
+            lock (_selectedFileLock)
+            {
+                _selectedFile = value;
+            }
+        }
     }
 
     public ObservableCollection<FileModel> Files
@@ -114,6 +175,7 @@ public class FilePanelViewModel : ViewModelBase
         FileSystemManager.PushLastSelectedFile(_selectedFile);
         Files = FileSystemManager.GetAllCurrentFiles();
         SelectedFile = Files[0];
+        _fileSystemWatcher.Path = FileSystemManager.GetCurrentDirectoryPath();
     }
 
 
@@ -129,6 +191,7 @@ public class FilePanelViewModel : ViewModelBase
         FileSystemManager.OpenDirectory(parentDir);
         Files = FileSystemManager.GetAllCurrentFiles();
         SelectedFile = Files[Files.ToList().FindIndex(model => model.FileName.Equals(previousSelectedFile.FileName))];
+        _fileSystemWatcher.Path = FileSystemManager.GetCurrentDirectoryPath();
     }
 
     public async void PasteEvent()
@@ -141,11 +204,32 @@ public class FilePanelViewModel : ViewModelBase
         }
     }
 
-    public void UpdateFileView()
+    private void UpdateFileView()
     {
-        var tmpSelected = _selectedFile;
-        Files = FileSystemManager.GetAllCurrentFiles();
-        SelectedFile = tmpSelected;
-        Thread.Sleep(1000);
+        while (true)
+        {
+            UpdateFileList(FileSystemManager.GetAllCurrentFiles().ToList());
+            Thread.Sleep(200);
+        }
+    }
+    
+    private void UpdateFileList(List<FileModel> updatedFiles)
+    {
+        var addedFiles = updatedFiles.Except(Files);
+        var removedFiles = Files.Except(updatedFiles);
+    
+        foreach (var addedFile in addedFiles)
+        {
+            int index = Files.BinarySearch(addedFile);
+            if (index < 0)
+            {
+                index = ~index;
+            }
+            Dispatcher.UIThread.Invoke(() => Files.Insert(index, addedFile));
+        }
+        foreach (var removedFile in removedFiles)
+        {
+            Dispatcher.UIThread.Invoke(() => Files.Remove(removedFile));
+        }
     }
 }
