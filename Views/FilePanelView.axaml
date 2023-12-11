@@ -17,28 +17,39 @@
 
     <DataGrid x:Name="FileList" ItemsSource="{Binding Files}" Margin="10" CanUserResizeColumns="True"
               CanUserSortColumns="True" IsReadOnly="True" GridLinesVisibility="None" BorderBrush="Transparent"
-              SelectedItem="{Binding SelectedFile}" Sorting="FileList_OnSorting">
+              SelectedItem="{Binding SelectedFile}" Sorting="FileList_OnSorting" Tapped="FileList_OnTapped" DoubleTapped="FileList_OnDoubleTapped" KeyDown="FileList_OnKeyDown">
         <DataGrid.KeyBindings>
-            <KeyBinding Gesture="Enter" Command="{Binding HotKeyCommand}" CommandParameter="{x:Static Key.Enter}"></KeyBinding>
-            <KeyBinding Gesture="Back" Command="{Binding HotKeyCommand}" CommandParameter="{x:Static Key.Back}"></KeyBinding>
-            <KeyBinding Gesture="A" Command="{Binding HotKeyCommand}" CommandParameter="{x:Static Key.A}"></KeyBinding>
+            <!-- <KeyBinding Gesture="Enter" Command="{Binding HotKeyCommand}" CommandParameter="{x:Static Key.Enter}"></KeyBinding> -->
+            <!-- <KeyBinding Gesture="Back" Command="{Binding HotKeyCommand}" CommandParameter="{x:Static Key.Back}"></KeyBinding> -->
+            <!-- <KeyBinding Gesture="F2" Command="{Binding HotKeyCommand}" CommandParameter="{x:Static Key.F2}"></KeyBinding> -->
+            <!-- <KeyBinding Gesture="F5" Command="{Binding HotKeyCommand}" CommandParameter="{x:Static Key.F5}"></KeyBinding> -->
             <!-- <KeyBinding Gesture="Ctrl+C" Command="{Binding CopyCommand}" CommandParameter="{Binding Path=$self}"></KeyBinding> -->
-            <KeyBinding Gesture="Ctrl+V" Command="{Binding HotKeyProcessor}"></KeyBinding>
+            <KeyBinding Gesture="Ctrl+V" Command="{Binding HotKeyProcess}"></KeyBinding>
         </DataGrid.KeyBindings>
         <DataGrid.Columns>
             <DataGridTemplateColumn Header="{x:Static res:Localization.Name}" Width="400" CanUserSort="True"
                                     SortMemberPath="Name">
-                <DataTemplate DataType="models:FileModel">
-                    <Grid ColumnDefinitions="24, 350">
-                        <Image Grid.Column="0" Width="24" Height="24" Source="{Binding FileIcon}">
-                        </Image>
-                        <TextBlock Grid.Column="1" Text="{Binding FileName}" VerticalAlignment="Center">
-                        </TextBlock>
-                    </Grid>
-                </DataTemplate>
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate DataType="models:FileModel">
+                        <Grid ColumnDefinitions="24, 350">
+                            <Image Grid.Column="0" Width="24" Height="24" Source="{Binding FileIcon}">
+                            </Image>
+                            <TextBlock Grid.Column="1" Text="{Binding FileName}" VerticalAlignment="Center">
+                            </TextBlock>
+                        </Grid>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+                <DataGridTemplateColumn.CellEditingTemplate>
+                    <DataTemplate>
+                        <TextBox Text="{Binding FileName, Mode=TwoWay}"></TextBox>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellEditingTemplate>
             </DataGridTemplateColumn>
             <DataGridTextColumn Header="Extension" Binding="{Binding FileExtension}" CanUserSort="True"
                                 SortMemberPath="Extension">
+            </DataGridTextColumn>
+            <DataGridTextColumn Header="Size" Binding="{Binding Size}" CanUserSort="True" SortMemberPath="Size">
+                
             </DataGridTextColumn>
         </DataGrid.Columns>
         <DataGrid.Styles>

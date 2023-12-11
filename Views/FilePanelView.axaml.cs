@@ -1,20 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Windows.Input;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
-using OsirisCommander.Logic.FileSystem;
-using OsirisCommander.Logic.FileSystem.Impl;
+using Avalonia.Threading;
 using OsirisCommander.Logic.FileSystem.Sorting;
 using OsirisCommander.ViewModels;
-using ReactiveUI;
 
 namespace OsirisCommander.Views;
 
@@ -24,6 +15,8 @@ public partial class FilePanelView : UserControl
     public bool Focused { get; set; }
     
     private FilePanelViewModel? _viewModel;
+
+    private bool _isEditing = false;
 
     public FilePanelView()
     {
@@ -48,10 +41,6 @@ public partial class FilePanelView : UserControl
         _viewModel =  DataContext as FilePanelViewModel;
         if (_viewModel != null) _viewModel.Clipboard = TopLevel.GetTopLevel(this)?.Clipboard;
         if (_viewModel != null) _viewModel.View = this;
-        // if (_viewModel != null) GotFocus += (sender, args) =>
-        // {
-        //     _viewModel.UpdateFileView();
-        // };
         base.OnLoaded(e);
     }
 
@@ -61,5 +50,35 @@ public partial class FilePanelView : UserControl
         var eValue = (FilePanelColumn) Enum.Parse(typeof(FilePanelColumn), sortMemberPath);
         _viewModel.Sort(eValue);
         e.Handled = true;
+    }
+
+    private void FileList_OnKeyDown(object? sender, KeyEventArgs e)
+    {
+        _viewModel.HotKeyProcess(e.Key);
+    }
+
+    private void FileList_OnTapped(object? sender, TappedEventArgs e)
+    {
+        // if (_isDoubleClick)
+        // {
+        //     var dataGrid = (DataGrid)sender;
+        //     if (dataGrid.CurrentColumn is DataGridTemplateColumn && dataGrid.SelectedItem != null)
+        //     {
+        //         dataGrid.BeginEdit();
+        //     }
+        // }
+        // else
+        // {
+        //     _isDoubleClick = true;
+        //     _doubleClickTimer.Start();
+        // }
+    }
+    
+    private void FileList_OnDoubleTapped(object? sender, TappedEventArgs e)
+    {
+        if (!_isEditing)
+        {
+            _viewModel.OnDoubleTap();
+        }
     }
 }

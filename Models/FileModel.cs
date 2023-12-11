@@ -1,29 +1,90 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Runtime.CompilerServices;
+using System.Text;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 
 namespace OsirisCommander.Models;
 
-public class FileModel : IComparable
+public class FileModel : IComparable, INotifyPropertyChanged
 {
-    public string FileName { get; set; }
-    public string FileExtension { get; set; }
-    public Bitmap FileIcon { get; set; }
-    public long Size { get; set; }
-    public bool IsDirectory { get; set; }
-    public string FullPath { get; set; }
+    private string _fileName;
+    private string _fileExtension;
+    private Bitmap _fileIcon;
+    private long _size;
+    private bool _isDirectory;
+    private string _fullPath;
 
     public FileModel(string fileName, string fileExtension, string fileIcon, long size, bool isDirectory,
         string fullPath)
     {
-        FileName = fileName;
-        FileExtension = fileExtension;
-        FileIcon = new Bitmap(AssetLoader.Open(new Uri(fileIcon)));
-        Size = size;
-        IsDirectory = isDirectory;
-        FullPath = fullPath;
+        _fileName = fileName;
+        _fileExtension = fileExtension;
+        _fileIcon = new Bitmap(AssetLoader.Open(new Uri(fileIcon)));
+        _size = size;
+        _isDirectory = isDirectory;
+        _fullPath = fullPath;
+    }
+
+    public string FileName
+    {
+        get => _fileName;
+        set
+        {
+            var tmpPath = _fullPath;
+            SetField(ref _fileName, value);
+            var split = FullPath.Split("\\");
+            var stringBuilder = new StringBuilder();
+            for (var i = 0; i < split.Length - 1; i++)
+            {
+                stringBuilder.Append(split[i]).Append("\\");
+            }
+
+            stringBuilder.Append(value);
+            FullPath = stringBuilder.ToString();
+
+            if (IsDirectory)
+            {
+                Directory.Move(tmpPath, FullPath);
+            }
+            else
+            {
+                File.Move(tmpPath, FullPath);
+            }
+        }
+    }
+
+    public string FileExtension
+    {
+        get => _fileExtension;
+        set => SetField(ref _fileExtension, value);
+    }
+
+    public Bitmap FileIcon
+    {
+        get => _fileIcon;
+        set { SetField(ref _fileIcon, value); }
+    }
+
+    public long Size
+    {
+        get => _size;
+        set => SetField(ref _size, value);
+    }
+
+    public bool IsDirectory
+    {
+        get => _isDirectory;
+        set => SetField(ref _isDirectory, value);
+    }
+
+    public string FullPath
+    {
+        get => _fullPath;
+        set => SetField(ref _fullPath, value);
     }
 
     public override bool Equals(object? obj)
@@ -36,7 +97,7 @@ public class FileModel : IComparable
     {
         return HashCode.Combine(FileName, FileExtension, FullPath);
     }
-    
+
     public override string ToString()
     {
         return
@@ -46,6 +107,16 @@ public class FileModel : IComparable
     public int CompareTo(object? obj)
     {
         var model = (FileModel)obj;
+        if (IsDirectory && !model.IsDirectory)
+        {
+            return -1;
+        }
+
+        if (!IsDirectory && model.IsDirectory)
+        {
+            return 1;
+        }
+
         return String.Compare(FileName, model.FileName, StringComparison.OrdinalIgnoreCase);
     }
 
@@ -59,5 +130,20 @@ public class FileModel : IComparable
     {
         return new FileModel(directoryInfo.Name, "<DIR>", "avares://OsirisCommander/Assets/folder_icon.png", 0, true,
             directoryInfo.FullName);
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+    {
+        if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+        field = value;
+        OnPropertyChanged(propertyName);
+        return true;
     }
 }

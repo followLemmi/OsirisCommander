@@ -30,8 +30,17 @@ public class PanelController
             Panel.Right => _leftPanel.FileSystemManager.GetCurrentDirectoryPath() + $"/{sourceFileModel.FileName}",
             _ => ""
         };
-        var files = Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories);
-        Directory.CreateDirectory(targetDirectory);
+
+        string[]? files;
+        if (sourceFileModel.IsDirectory)
+        {
+            files = Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories);
+            Directory.CreateDirectory(targetDirectory);
+        }
+        else
+        {
+            files = new[] { sourcePath };
+        }
 
         var totalBytes = 0L;
         foreach (var file in files)
