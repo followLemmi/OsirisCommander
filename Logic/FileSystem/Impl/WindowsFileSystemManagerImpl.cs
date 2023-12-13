@@ -43,7 +43,9 @@ public class WindowsFileSystemManagerImpl : IFileSystemManager
 
     public List<FileModel> GetCurrentDirectoriesList()
     {
-        return new DirectoryInfo(_currentDirectory).GetDirectories().Select(FileModel.FromDirectoryInfo).ToList();
+        var accessibleDirs = new List<FileModel>();
+        accessibleDirs.AddRange(new DirectoryInfo(_currentDirectory).GetDirectories().Where(dir => !dir.Attributes.HasFlag(FileAttributes.Hidden)).Select(FileModel.FromDirectoryInfo));
+        return accessibleDirs;
     }
 
     public ObservableCollection<FileModel> GetAllCurrentFiles()
@@ -78,6 +80,18 @@ public class WindowsFileSystemManagerImpl : IFileSystemManager
         else
         {
             Process.Start(path);
+        }
+    }
+
+    public void DeleteFile(FileModel fileModel)
+    {
+        if (fileModel.IsDirectory)
+        {
+            Directory.Delete(fileModel.FullPath, true);
+        }
+        else
+        {
+            File.Delete(fileModel.FullPath);
         }
     }
 

@@ -38,8 +38,10 @@ public class FileSystemEventProcessor
 
     private string SetWatchPath(string watchPath)
     {
+        _fileSystemWatcher.EnableRaisingEvents = false;
         _watchPath = watchPath;
         _fileSystemWatcher.Path = _watchPath;
+        _fileSystemWatcher.EnableRaisingEvents = true;
         return _watchPath;
     }
 

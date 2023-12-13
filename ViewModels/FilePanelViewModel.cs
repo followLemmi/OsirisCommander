@@ -8,10 +8,12 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
 using OsirisCommander.Logic.FileSystem;
+using OsirisCommander.Logic.FileSystem.Events;
 using OsirisCommander.Logic.FileSystem.Sorting;
 using OsirisCommander.Models;
 using OsirisCommander.Utils;
 using OsirisCommander.Views;
+using OsirisCommander.Views.Dialogs;
 using ReactiveUI;
 using Panel = OsirisCommander.Logic.FileSystem.Panel;
 
@@ -33,7 +35,7 @@ public class FilePanelViewModel : ViewModelBase
     private bool _focused;
     private FileSystemEventProcessor _fileSystemEventProcessor;
     private bool _isEditNow = false;
-    private FileModel _editableFile;
+    private FileInfo _editableFile;
 
     public delegate void CopyDelegate(Panel panel, FileModel fileModel);
     public static event CopyDelegate CopyEvent;
@@ -48,6 +50,8 @@ public class FilePanelViewModel : ViewModelBase
         _selectedFile = _files[0];
         PanelController.CopyProgress += Progress;
         _fileSystemEventProcessor = new FileSystemEventProcessor(Files, FileSystemManager.GetCurrentDirectoryPath());
+
+        FileEvents.DeleteFileConfirmEvent += DeleteFileConfirmHandler;
     }
 
     private void Progress(double percentage)
@@ -106,6 +110,10 @@ public class FilePanelViewModel : ViewModelBase
             case Key.F5:
                 Copy();
                 break;
+            case Key.Delete:
+            case Key.F8:
+                FileEvents.DeleteFileDialogEvent(SelectedFile.FullPath, _panelOrder);
+                break;
             default:
                 Console.WriteLine($"Key pressed {key}");
                 break;
@@ -131,6 +139,15 @@ public class FilePanelViewModel : ViewModelBase
         {
             var dataGrid = View.FileListDataGrid;
             dataGrid.CommitEdit(DataGridEditingUnit.Cell, true);
+            if (SelectedFile.IsDirectory)
+            {
+                Directory.Move(_editableFile.FullName, SelectedFile.FullPath);
+            }
+            else
+            {
+                File.Move(_editableFile.FullName, SelectedFile.FullPath);
+            }
+            _editableFile = null;
             _isEditNow = false;
             dataGrid.IsReadOnly = true;
             return;
@@ -144,6 +161,7 @@ public class FilePanelViewModel : ViewModelBase
 
     private void BeginEdit()
     {
+        _editableFile = new FileInfo(SelectedFile.FullPath);
         var dataGrid = View.FileListDataGrid;
         if (dataGrid.CurrentColumn is DataGridTemplateColumn && dataGrid.SelectedItem != null)
         {
@@ -179,6 +197,14 @@ public class FilePanelViewModel : ViewModelBase
             SelectedFile = Files[Files.ToList().FindIndex(model => model.FileName.Equals(previousSelectedFile.FileName))];
             _fileSystemEventProcessor.WatchPath = FileSystemManager.GetCurrentDirectoryPath();
         }
+    }
+
+    private void DeleteFileConfirmHandler(object sender, Panel panel)
+    {
+        if (panel != _panelOrder) return;
+        FileSystemManager.DeleteFile(SelectedFile);
+        var dialog = sender as DeleteDialog;
+        dialog.Close();
     }
 
     public async void PasteEvent()

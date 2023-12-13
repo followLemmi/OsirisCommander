@@ -50,5 +50,19 @@ namespace OsirisCommander.Resources {
                 return ResourceManager.GetString("Name", resourceCulture);
             }
         }
+        
+        public static string Yes {
+            get {
+                return ResourceManager.GetString("Yes", resourceCulture);
+            }
+        }
+
+        public static string No
+        {
+            get
+            {
+                return ResourceManager.GetString("No", resourceCulture);
+            }
+        }
     }
 }

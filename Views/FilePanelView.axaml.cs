@@ -34,6 +34,7 @@ public partial class FilePanelView : UserControl
                 }
             };
         }
+        FileListDataGrid.AddHandler(DataGrid.KeyDownEvent, FileList_OnKeyDown, RoutingStrategies.Tunnel);
     }
     
     protected override void OnLoaded(RoutedEventArgs e)
@@ -55,23 +56,6 @@ public partial class FilePanelView : UserControl
     private void FileList_OnKeyDown(object? sender, KeyEventArgs e)
     {
         _viewModel.HotKeyProcess(e.Key);
-    }
-
-    private void FileList_OnTapped(object? sender, TappedEventArgs e)
-    {
-        // if (_isDoubleClick)
-        // {
-        //     var dataGrid = (DataGrid)sender;
-        //     if (dataGrid.CurrentColumn is DataGridTemplateColumn && dataGrid.SelectedItem != null)
-        //     {
-        //         dataGrid.BeginEdit();
-        //     }
-        // }
-        // else
-        // {
-        //     _isDoubleClick = true;
-        //     _doubleClickTimer.Start();
-        // }
     }
     
     private void FileList_OnDoubleTapped(object? sender, TappedEventArgs e)

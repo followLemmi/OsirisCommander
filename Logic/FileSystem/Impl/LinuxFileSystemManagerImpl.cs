@@ -80,6 +80,11 @@ public class LinuxFileSystemManagerImpl : IFileSystemManager
         }
     }
 
+    public void DeleteFile(FileModel fileModel)
+    {
+        throw new System.NotImplementedException();
+    }
+
     public FileModel GetPreviousSelectedFile()
     {
         throw new System.NotImplementedException();

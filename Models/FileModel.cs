@@ -34,7 +34,7 @@ public class FileModel : IComparable, INotifyPropertyChanged
         get => _fileName;
         set
         {
-            var tmpPath = _fullPath;
+            // var tmpPath = _fullPath;
             SetField(ref _fileName, value);
             var split = FullPath.Split("\\");
             var stringBuilder = new StringBuilder();
@@ -42,18 +42,18 @@ public class FileModel : IComparable, INotifyPropertyChanged
             {
                 stringBuilder.Append(split[i]).Append("\\");
             }
-
+            
             stringBuilder.Append(value);
             FullPath = stringBuilder.ToString();
-
-            if (IsDirectory)
-            {
-                Directory.Move(tmpPath, FullPath);
-            }
-            else
-            {
-                File.Move(tmpPath, FullPath);
-            }
+            //
+            // if (IsDirectory)
+            // {
+            //     Directory.Move(tmpPath, FullPath);
+            // }
+            // else
+            // {
+            //     File.Move(tmpPath, FullPath);
+            // }
         }
     }
 

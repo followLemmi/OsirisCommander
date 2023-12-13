@@ -22,6 +22,8 @@ public interface IFileSystemManager
 
     public void OpenDirectory(string path);
 
+    public void DeleteFile(FileModel fileModel);
+
     public void PasteFile(List<string>? files);
 
     public FileModel GetPreviousSelectedFile();

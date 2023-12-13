@@ -41,4 +41,5 @@
       <DependentUpon>Localization.resx</DependentUpon>
     </Compile>
   </ItemGroup>
+  
 </Project>
