@@ -7,6 +7,7 @@ using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
+using Avalonia.Threading;
 using OsirisCommander.Logic.FileSystem;
 using OsirisCommander.Logic.FileSystem.Events;
 using OsirisCommander.Logic.FileSystem.Sorting;
@@ -30,7 +31,6 @@ public class FilePanelViewModel : ViewModelBase
     public readonly IFileSystemManager FileSystemManager;
     private readonly FileListSortingManager _fileListSortingManager;
     private ObservableCollection<FileModel> _files;
-    private readonly object _selectedFileLock = new object();
     private FileModel _selectedFile;
     private bool _focused;
     private FileSystemEventProcessor _fileSystemEventProcessor;
@@ -38,6 +38,7 @@ public class FilePanelViewModel : ViewModelBase
     private FileInfo _editableFile;
 
     public delegate void CopyDelegate(Panel panel, FileModel fileModel);
+
     public static event CopyDelegate CopyEvent;
 
     public FilePanelViewModel(Panel panelOrder, IFileSystemManager fileSystemManager)
@@ -49,7 +50,7 @@ public class FilePanelViewModel : ViewModelBase
         _files = FileSystemManager.GetAllCurrentFiles();
         _selectedFile = _files[0];
         PanelController.CopyProgress += Progress;
-        _fileSystemEventProcessor = new FileSystemEventProcessor(Files, FileSystemManager.GetCurrentDirectoryPath());
+        _fileSystemEventProcessor = new FileSystemEventProcessor(_files, FileSystemManager.GetCurrentDirectoryPath());
 
         FileEvents.DeleteFileConfirmEvent += DeleteFileConfirmHandler;
     }
@@ -66,26 +67,22 @@ public class FilePanelViewModel : ViewModelBase
 
     public FileModel SelectedFile
     {
-        get
-        {
-            lock (_selectedFileLock)
-            {
-                return _selectedFile;
-            }
-        }
+        get => _selectedFile;
         set
         {
-            lock (_selectedFileLock)
-            {
-                _selectedFile = value;
-            }
+            Console.WriteLine($"SelectedFile changed to {value}");
+            this.RaiseAndSetIfChanged(ref _selectedFile, value);
         }
     }
 
     public ObservableCollection<FileModel> Files
     {
         get => _files;
-        set => this.RaiseAndSetIfChanged(ref _files, value);
+        set
+        {
+            _fileSystemEventProcessor.Files = value;
+            this.RaiseAndSetIfChanged(ref _files, value);
+        }
     }
 
     public bool Focused
@@ -93,7 +90,7 @@ public class FilePanelViewModel : ViewModelBase
         get => _focused;
         set => _focused = value;
     }
-    
+
     public void HotKeyProcess(Key key)
     {
         switch (key)
@@ -147,11 +144,13 @@ public class FilePanelViewModel : ViewModelBase
             {
                 File.Move(_editableFile.FullName, SelectedFile.FullPath);
             }
+
             _editableFile = null;
             _isEditNow = false;
             dataGrid.IsReadOnly = true;
             return;
         }
+
         FileSystemManager.OpenDirectory(SelectedFile.FullPath);
         FileSystemManager.PushLastSelectedFile(_selectedFile);
         Files = FileSystemManager.GetAllCurrentFiles();
@@ -169,6 +168,7 @@ public class FilePanelViewModel : ViewModelBase
             dataGrid.BeginEdit();
             _isEditNow = true;
         }
+
         Console.WriteLine($"Begin edit {dataGrid.SelectedItem}");
     }
 
@@ -185,12 +185,12 @@ public class FilePanelViewModel : ViewModelBase
     {
         if (!_isEditNow)
         {
-            Console.WriteLine("Backspace");
             var previousSelectedFile = FileSystemManager.GetPreviousSelectedFile();
             if (previousSelectedFile == null)
             {
                 return;
             }
+
             var parentDir = FileSystemManager.GetParentDirectoryPath();
             FileSystemManager.OpenDirectory(parentDir);
             Files = FileSystemManager.GetAllCurrentFiles();

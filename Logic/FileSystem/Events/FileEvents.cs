@@ -11,7 +11,6 @@ public class FileEvents
 
     public static event DeleteFileDelegate DeleteFileEvent;
     public static event DeleteConfirmationDelegate DeleteFileConfirmEvent;
-
     public static void DeleteFileDialogEvent(string filePath, Panel panel)
     {
         DeleteFileEvent.Invoke(filePath, panel);

@@ -17,6 +17,7 @@
               CanUserSortColumns="True" IsReadOnly="True" GridLinesVisibility="None" BorderBrush="Transparent"
               SelectedItem="{Binding SelectedFile}" Sorting="FileList_OnSorting" DoubleTapped="FileList_OnDoubleTapped">
         <DataGrid.KeyBindings>
+            <!-- <KeyBinding Gesture="Back" Command="{Binding HotKeyCommand}" CommandParameter="{x:Static Key.Back}"></KeyBinding> -->
             <KeyBinding Gesture="Ctrl+V" Command="{Binding HotKeyProcess}" />
         </DataGrid.KeyBindings>
         <DataGrid.Columns>
